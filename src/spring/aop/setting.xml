@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd">
+	
+	<bean id="target" class="spring.aop.entity.NewlecExam" p:kor="10" p:eng="20" p:math="30" p:com="40" />
+	<!-- List는 참조목록이기 때문에 참조 할 객체를 만들어줘야함 -->
+	<bean id="logAroundAdvice" class="spring.aop.advice.LogAroundAdvice" />
+	<!-- 
+		proxy에는 두가지 설정을 해야함 
+		첫번재는 ClassLoader
+		두번째는 곁단위 업무의 로직을 설정해야함 invoke안의 로직
+		타겟과 핸들러만 넣어주면 스프링에서는 인터페이스 명 등을 다 알아서 해 줌 
+	-->
+	<bean id="exam" class="org.springframework.aop.framework.ProxyFactoryBean">
+	<!-- name = setterName , ref = 참조 할 id명 -->
+		<property name="target" ref="target" />
+		<property name="interceptorNames">
+			<list>
+				<!-- value = 참조 할 id -->
+				<value>logAroundAdvice</value>
+			</list>
+		</property>
+	</bean>
+
+</beans>

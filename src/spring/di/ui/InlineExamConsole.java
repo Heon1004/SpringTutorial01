@@ -2,9 +2,12 @@ package spring.di.ui;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
 import spring.di.entity.Exam;
 
+//<context:component-scan base-package="spring.di.ui"/>が必要
+@Component("console")
 public class InlineExamConsole implements ExamConsole {
 	
 	/*
@@ -19,12 +22,14 @@ public class InlineExamConsole implements ExamConsole {
 	idと一致するもの見つけ出して設定する
 */
 	
-	@Autowired(required = false)
-	@Qualifier("exam1")
+	@Autowired
+//	@Qualifier("exam1")
 	private Exam exam;
 
 	//기본생성자가 생성되면서 Qualifier 인젝션됌.
-	public InlineExamConsole() {System.out.println("기본생성자 호출");}
+	public InlineExamConsole() {
+		System.out.println("InlineExamConsole 기본생성자 호출");
+	}
 	
 	public InlineExamConsole(Exam exam) {
 		this.exam = exam;
@@ -33,11 +38,13 @@ public class InlineExamConsole implements ExamConsole {
 
 	@Override
 	public void print() {
-		System.out.printf("total is %d, avg is %f\n", exam.total(), exam.avg());
-
+		if(exam == null) {
+			System.out.printf("total is %d, avg is %f\n", 0, 0);
+		}else {
+			System.out.printf("total is %d, avg is %f\n", exam.total(), exam.avg());
+		}
 	}
 
-	
 	@Override
 	public void setExam(Exam exam) {
 		System.out.println("setter Method");

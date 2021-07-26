@@ -1,18 +1,10 @@
-package spring.di.entity;
+package spring.aop.entity;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
-@Service
 public class NewlecExam implements Exam {
 
-	@Value("20")
 	private int kor;
-	@Value("20")
 	private int eng;
-	@Value("20")
 	private int math;
-	@Value("20")
 	private int com;
 
 	public NewlecExam() {
@@ -60,14 +52,18 @@ public class NewlecExam implements Exam {
 
 	@Override
 	public int total() {
-		// TODO Auto-generated method stub
-		return kor + eng + math + com;
+		
+		int result = kor + eng + math + com;
+		
+		return result;
 	}
 
 	@Override
 	public float avg() {
-		// TODO Auto-generated method stub
-		return total() / 4.0f;
+		
+		float result = total() / 4.0f;
+		
+		return result;
 	}
 
 	@Override

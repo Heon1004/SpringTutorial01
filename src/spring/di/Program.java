@@ -3,7 +3,9 @@ package spring.di;
 import java.util.List;
 
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.stereotype.Component;
 
 import spring.di.entity.Exam;
 import spring.di.entity.NewlecExam;
@@ -20,7 +22,9 @@ public class Program {
 		 
 		 * console.setExam(exam);
 		 */
-		ApplicationContext context = new ClassPathXmlApplicationContext("spring/di/setting.xml");
+		ApplicationContext context =
+				new AnnotationConfigApplicationContext(NewlectDIConfig.class);
+				//new ClassPathXmlApplicationContext("spring/di/setting.xml");
 
 		/*
 		  ExamConsole console = (ExamConsole) context.getBean("console");
@@ -30,7 +34,14 @@ public class Program {
 		//Exam exam = context.getBean(Exam.class);
 		//System.out.println(exam.toString());
 		//Examconsole이라는 형식의 class 타입에 맞는 놈을 갖고옴. 만약 인터페이스라면 인터페이스를 가져옴.
-		ExamConsole console = context.getBean(ExamConsole.class);
+		/*
+		 	@Component Error남 ExamConsole형식으로 찾는게 아닌 console이름으로 찾기때문.
+		 	만약 이름으로 찾고싶을땐 @Component("console")이름을 붙혀줘야함.
+		 */
+		ExamConsole console = (ExamConsole)context.getBean("console");
+		
+//		ExamConsole console = (ExamConsole)context.getBean("ExamConsole.class");
+		
 		console.print();
 		
 		//setting.xml에서 exams라는 이름으로 가져옴
