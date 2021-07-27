@@ -19,7 +19,7 @@ public class LogAroundAdvice implements MethodInterceptor{
 		Object result = invocation.proceed();
 		
 		long end = System.currentTimeMillis();
-		
+		System.out.println("Aroundadvice Logic");
 		String message = (end - start) + "ms 시간이 걸렸습니다.";
 		System.out.println(message);
 		

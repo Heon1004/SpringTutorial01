@@ -8,22 +8,85 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd">
 	
-	<bean id="target" class="spring.aop.entity.NewlecExam" p:kor="10" p:eng="20" p:math="30" p:com="40" />
-	<!-- List는 참조목록이기 때문에 참조 할 객체를 만들어줘야함 -->
-	<bean id="logAroundAdvice" class="spring.aop.advice.LogAroundAdvice" />
-	<!-- 
+<!-- 
 		proxy에는 두가지 설정을 해야함 
 		첫번재는 ClassLoader
 		두번째는 곁단위 업무의 로직을 설정해야함 invoke안의 로직
 		타겟과 핸들러만 넣어주면 스프링에서는 인터페이스 명 등을 다 알아서 해 줌 
-	-->
+		
+		AOP의 실행과정
+		before -> targer의 메소드를 호출 -> afterReturning이 실행
+		메소드를 호출하는 과정에서 예외가 발생하면 -> AfterThrowing이 실행
+		
+		Pointcuts:원하는 메소드에서만 위빙(weaving)시키는것. 즉 그 메소드에서만 AOP처리가 되도록 하는 것
+		weaving: Proxy에서 Method가 들어가있는 컨테이너 Core Concern로 왔다갔다 호출 및 반환 받는것 <-> (영어뜻으로는 바느질하다)
+		JoinPoint: 각각의 메소드를 지칭하는 말
+		
+-->
+	
+	<bean id="target" class="spring.aop.entity.NewlecExam" p:kor="100" p:eng="20" p:math="30" p:com="40" />
+	<!-- List는 참조목록이기 때문에 참조 할 객체를 만들어줘야함 -->
+	<bean id="logAroundAdvice" class="spring.aop.advice.LogAroundAdvice" />
+	<bean id="logBeforeAdvice" class="spring.aop.advice.LogBeforeAdvice" />
+	<bean id="logAfterReturningAdvice" class="spring.aop.advice.LogAfterReturningAdvice" />
+	<bean id="logAfterThrowingAdvice" class="spring.aop.advice.LogAfterThrowingAdvice" />
+	
+<!--  PointCuts을 위한 클래스 설정 , classic한 방식
+	<bean id="classicPointCut" class="org.springframework.aop.support.NameMatchMethodPointcut">
+		//name은 틀리면 안됌. JoinPoint가 될수있는 method를 value를 설정
+		<property name="mappedName" value="total">
+		</property>
+	</bean> 
+	
+	<bean id="classicAroundAdvisor" class="org.springframework.aop.support.DefaultPointcutAdvisor">
+		Property의 name은 정해져있음 (Class에 있는 setter함수)
+		<property name="advice" ref="logAroundAdvice" />
+		<property name="pointcut" ref="classicPointCut" />
+	</bean>
+-->
+	<!-- 원하는 Advice에서 사용되게끔 PointCut과Advice와 연결을 시켜주어야 하기에 Advisor 클래스를 만듬 -->
+<!-- 
+	<bean id="classicBeforeAdvisor" class="org.springframework.aop.support.NameMatchMethodPointcutAdvisor">
+		Property의 name은 정해져있음 (Class에 있는 setter함수)
+		<property name="advice" ref="logBeforeAdvice" />
+		<property name="mappedNames" >
+			<list>
+				사용하고자하는 메서드명
+				<value>total</value>
+				<value>avg</value>
+			</list>
+		</property>
+	</bean>
+-->
+	
+	<!-- Regular Expression == Regexp -->
+	<bean id="classicBeforeAdvisor" class="org.springframework.aop.support.RegexpMethodPointcutAdvisor">
+		<!-- Property의 name은 정해져있음 (Class에 있는 setter함수) -->
+		<property name="advice" ref="logBeforeAdvice" />
+		<property name="patterns" >
+			<list>
+			<!-- .*to.* 메소드명에서 to가 들어가는것만 찾음 SQL LIKE의 %랑 같음 -->
+				<value>.*to.*</value>
+			</list>
+		</property>
+	</bean> 
+	<bean id="classicAroundAdvisor" class="org.springframework.aop.support.NameMatchMethodPointcutAdvisor">
+		<property name="advice" ref="logAroundAdvice" />
+		<property name="mappedName" value="total" />
+	</bean>
+	
 	<bean id="exam" class="org.springframework.aop.framework.ProxyFactoryBean">
 	<!-- name = setterName , ref = 참조 할 id명 -->
 		<property name="target" ref="target" />
+		<!-- interceptorNames라는 List개념의 핸들러 -->
 		<property name="interceptorNames">
 			<list>
 				<!-- value = 참조 할 id -->
-				<value>logAroundAdvice</value>
+				<value>classicAroundAdvisor</value>
+				<!-- advice를 pointcut이 연결한 classicBeforeAdvisor를 여기다가 설정해야함 -->
+				<value>classicBeforeAdvisor</value>
+				<value>logAfterReturningAdvice</value>
+				<value>logAfterThrowingAdvice</value>
 			</list>
 		</property>
 	</bean>

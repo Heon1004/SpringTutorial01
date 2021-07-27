@@ -16,7 +16,6 @@ public class NewlecExam implements Exam {
 	private int com;
 
 	public NewlecExam() {
-		System.out.println("NewlecWxam Constructor Called");
 	}
 
 	public NewlecExam(int kor, int eng, int math, int com) {

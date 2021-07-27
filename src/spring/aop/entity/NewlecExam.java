@@ -8,7 +8,6 @@ public class NewlecExam implements Exam {
 	private int com;
 
 	public NewlecExam() {
-		System.out.println("NewlecWxam Constructor Called");
 	}
 
 	public NewlecExam(int kor, int eng, int math, int com) {
@@ -54,6 +53,10 @@ public class NewlecExam implements Exam {
 	public int total() {
 		
 		int result = kor + eng + math + com;
+		
+		if(kor > 100) {
+			throw new IllegalArgumentException("유효하지 않은 국어점수");
+		}
 		
 		return result;
 	}
